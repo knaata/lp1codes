@@ -1,0 +1,81 @@
+#include<bits/stdc++.h>
+using namespace std;
+
+class RingElection
+{
+    int total;
+    vector<bool> state;
+public:
+    RingElection(int tot)
+    {
+        total = tot;
+        state = vector<bool>(total, true);
+
+        // Randomly make some processes down
+        srand(time(0)); // Seed for rand() based on current time
+
+        int numProcessesDown = rand() % total; // Randomly choose how many processes to bring down
+        for (int i = 0; i < numProcessesDown; ++i)
+        {
+            int downProcess = rand() % total;
+            down(downProcess + 1); // Processes are 1-indexed
+        }
+
+    }
+
+    void up(int pos)
+    {
+        state[pos-1] = true;
+    }
+    void down(int pos)
+    {
+        state[pos-1] = false;
+    }
+
+    void Election(int pos)
+    {
+        if(!state[pos-1])
+        {
+            cout << "down" << endl;
+            return;
+        }
+
+        cout << "Election started by P" << pos << endl;
+
+        int start = pos-1;
+        int last_true = start;
+        int ptr = (start+1)%total;
+
+        while (ptr!=start)
+        {
+            if(state[ptr])
+            {
+                cout << "Process p" << last_true+1 << " sends election message to process p" << ptr+1 << endl;
+            }
+            last_true = ptr;
+            ptr = (ptr+1)%total;
+        }
+        
+        cout << "process p" << last_true+1 << " sends an election message to process p" << start+1 << endl;
+
+        int max_process = -1;
+        for(int i=total-1;i>=0;i--)
+        {
+            if(state[i])
+            {
+                max_process = i;
+                break;
+            }
+        }
+        cout << "Election won by p" << max_process+1 << endl;
+    }
+};
+
+int main()
+{
+
+    RingElection algo(7);
+    algo.Election(5);
+
+    return 0;
+}
